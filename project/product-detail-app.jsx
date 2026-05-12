@@ -1328,30 +1328,20 @@ function App() {
   );
 }
 
-// device frame — iPhone-ish bezel
+// app shell — centered mobile-width column, no device chrome
 function Frame({ children }) {
   return (
     <div style={{
-      minHeight: '100vh', background: '#0E1116',
+      minHeight: '100dvh', background: '#F1F2F8',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 24, boxSizing: 'border-box',
       fontFamily: 'Barlow, system-ui, sans-serif'
     }}>
       <div style={{
-        width: 390, height: 812, background: '#000',
-        borderRadius: 48, padding: 8, boxSizing: 'border-box',
-        boxShadow: '0 30px 80px rgba(0,0,0,0.5), 0 0 0 1.5px #1f242b inset'
+        width: '100%', maxWidth: 390, height: '100dvh', maxHeight: 812,
+        background: '#fff', position: 'relative', overflow: 'hidden',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.08)'
       }}>
-        <div style={{
-          width: '100%', height: '100%', borderRadius: 40,
-          overflow: 'hidden', position: 'relative', background: '#fff'
-        }}>
-          {children}
-          <div style={{
-            position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
-            width: 110, height: 30, borderRadius: 999, background: '#000', zIndex: 100
-          }} />
-        </div>
+        {children}
       </div>
     </div>
   );

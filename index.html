@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Promo Codes — Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    html, body { margin: 0; padding: 0; background: #F1F2F8; font-family: 'Barlow', system-ui, sans-serif; color: #101828; }
+    *, *::before, *::after { box-sizing: border-box; }
+    .wrap { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card { width: 100%; max-width: 520px; background: #fff; border-radius: 20px; padding: 36px 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+    h1 { margin: 0 0 8px; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+    p { margin: 0 0 24px; font-size: 15px; line-height: 1.5; color: #475467; }
+    .links { display: flex; flex-direction: column; gap: 12px; }
+    .link { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; border-radius: 14px; text-decoration: none; color: #101828; background: #F1F2F8; border: 1px solid #E4E7EC; transition: background 160ms ease, border-color 160ms ease; }
+    .link:hover { background: #E8ECF4; border-color: #D0D5DD; }
+    .link strong { font-size: 15px; font-weight: 600; }
+    .link span { font-size: 13px; color: #475467; display: block; margin-top: 2px; }
+    .link .arrow { font-size: 18px; color: #0A7AFF; flex-shrink: 0; }
+    .featured { background: #0A7AFF; border-color: #0A7AFF; color: #fff; }
+    .featured:hover { background: #0866d6; border-color: #0866d6; }
+    .featured span, .featured .arrow { color: rgba(255,255,255,0.85); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Promo Codes — Prototypes</h1>
+      <p>Interactive prototypes for the product detail, checkout, and promo code flows. Open one to preview it in your browser.</p>
+      <div class="links">
+        <a class="link featured" href="project/Product%20Detail%20Prototype.html">
+          <div>
+            <strong>Product Detail + Checkout</strong>
+            <span>Bundle selection through full checkout flow</span>
+          </div>
+          <div class="arrow">→</div>
+        </a>
+        <a class="link" href="project/Promo%20Codes%20Prototype.html">
+          <div>
+            <strong>Promo Codes</strong>
+            <span>Apply and manage promo codes</span>
+          </div>
+          <div class="arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
