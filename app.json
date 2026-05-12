@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Promo Codes Preview",
+    "slug": "promo-codes-preview",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0E1116",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0E1116",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0E1116"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
