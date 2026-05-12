@@ -157,38 +157,6 @@ const ProfileIcon = ({ active }) =>
     <path {...stroke()} d="M5.5 19a7 7 0 0 1 13 0" />
   </Icon>;
 
-// ─── shared chrome ──────────────────────────────────────────────────
-function StatusBar() {
-  return (
-    <div style={{
-      height: 48, padding: '14px 24px 0', display: 'flex',
-      alignItems: 'flex-start', justifyContent: 'space-between',
-      background: C.white, boxSizing: 'border-box', flexShrink: 0,
-      fontFamily: '-apple-system, "SF Pro Text", system-ui'
-    }}>
-      <div style={{ fontSize: 15, fontWeight: 600, color: '#000', letterSpacing: -0.2 }}>9:41</div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <svg width="17" height="11" viewBox="0 0 17 11">
-          <rect x="0" y="7" width="3" height="4" rx="0.6" fill="#000" />
-          <rect x="4.5" y="5" width="3" height="6" rx="0.6" fill="#000" />
-          <rect x="9" y="2.5" width="3" height="8.5" rx="0.6" fill="#000" />
-          <rect x="13.5" y="0" width="3" height="11" rx="0.6" fill="#000" />
-        </svg>
-        <svg width="15" height="11" viewBox="0 0 17 12">
-          <path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill="#000" />
-          <path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill="#000" />
-          <circle cx="8.5" cy="10.5" r="1.5" fill="#000" />
-        </svg>
-        <svg width="25" height="12" viewBox="0 0 27 13">
-          <rect x="0.5" y="0.5" width="22" height="12" rx="3" stroke="#000" strokeOpacity="0.35" fill="none" />
-          <rect x="2" y="2" width="19" height="9" rx="1.5" fill="#000" />
-          <rect x="23.5" y="4" width="1.6" height="5" rx="0.6" fill="#000" fillOpacity="0.4" />
-        </svg>
-      </div>
-    </div>
-  );
-}
-
 // product-detail header: back / search / cart
 function ProductHeader({ onBack }) {
   return (
@@ -671,7 +639,6 @@ function ProductDetail({ onProceed }) {
       width: '100%', height: '100%', background: C.bg,
       display: 'flex', flexDirection: 'column', overflow: 'hidden'
     }}>
-      <StatusBar />
       <ProductHeader />
       <ProductCover />
       <ChipRow active={activeChip} onChange={setActiveChip} chips={CHIPS} />
@@ -975,7 +942,6 @@ function Checkout({ bundle, onBack, onComplete }) {
       width: '100%', height: '100%', background: C.bg,
       display: 'flex', flexDirection: 'column', overflow: 'hidden'
     }}>
-      <StatusBar />
       <CheckoutHeader onBack={onBack} />
 
       <div className="scroller" style={{
@@ -1328,21 +1294,15 @@ function App() {
   );
 }
 
-// app shell — centered mobile-width column, no device chrome
+// app shell — fills the full mobile browser viewport
 function Frame({ children }) {
   return (
     <div style={{
-      minHeight: '100dvh', background: '#F1F2F8',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      width: '100%', minHeight: '100dvh', height: '100dvh',
+      background: '#fff', position: 'relative', overflow: 'hidden',
       fontFamily: 'Barlow, system-ui, sans-serif'
     }}>
-      <div style={{
-        width: '100%', maxWidth: 390, height: '100dvh', maxHeight: 812,
-        background: '#fff', position: 'relative', overflow: 'hidden',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.08)'
-      }}>
-        {children}
-      </div>
+      {children}
     </div>
   );
 }
