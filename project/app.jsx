@@ -805,7 +805,7 @@ function HighlightStyle() {
 function Frame({ children }) {
   return (
     <div style={{
-      minHeight: '100vh', background: '#0E1116',
+      minHeight: '100vh', background: '#FFFFFF',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 24, boxSizing: 'border-box', fontFamily: 'Barlow, system-ui, sans-serif'
     }}>
@@ -816,9 +816,13 @@ function Frame({ children }) {
       }}>
         <div style={{
           width: '100%', height: '100%', borderRadius: 40, overflow: 'hidden', position: 'relative',
-          background: '#fff'
+          background: '#fff', display: 'flex', flexDirection: 'column'
         }}>
-          {children}
+          <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+            {children}
+          </div>
+          {/* iPhone home indicator safe area */}
+          <div style={{ height: 34, background: '#fff', flexShrink: 0 }} />
           {/* dynamic island */}
           <div style={{
             position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',

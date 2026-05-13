@@ -683,7 +683,7 @@ function ProductDetail({ onProceed }) {
 // ease-out micro-interactions: state transitions feel snappy on enter, gentle on settle
 const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
 
-function InputField({ value, onChange, placeholder, type = 'text' }) {
+function InputField({ value, onChange, placeholder, type = 'text', inputMode, pattern }) {
   const [focused, setFocused] = useState(false);
   const filled = value && value.length > 0;
   const borderColor = focused
@@ -703,6 +703,8 @@ function InputField({ value, onChange, placeholder, type = 'text' }) {
     }}>
       <input
         type={type}
+        inputMode={inputMode}
+        pattern={pattern}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
@@ -959,6 +961,8 @@ function Checkout({ bundle, onBack, onComplete }) {
               value={typedPlayerId}
               onChange={setTypedPlayerId}
               placeholder="Player ID"
+              inputMode="numeric"
+              pattern="[0-9]*"
             />
             <label
               onClick={() => setSavedDetails(v => !v)}
@@ -1301,9 +1305,14 @@ function Frame({ children }) {
       width: '100%', maxWidth: 430, minHeight: '100dvh', height: '100dvh',
       margin: '0 auto',
       background: '#fff', position: 'relative', overflow: 'hidden',
-      fontFamily: 'Barlow, system-ui, sans-serif'
+      fontFamily: 'Barlow, system-ui, sans-serif',
+      display: 'flex', flexDirection: 'column'
     }}>
-      {children}
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        {children}
+      </div>
+      {/* iPhone home indicator safe area */}
+      <div style={{ height: 34, background: '#fff', flexShrink: 0 }} />
     </div>
   );
 }
