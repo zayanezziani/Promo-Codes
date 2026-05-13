@@ -1294,11 +1294,12 @@ function App() {
   );
 }
 
-// app shell — fills the full mobile browser viewport
+// app shell — locked to the Figma frame width (402px) so all elements render at design size
 function Frame({ children }) {
   return (
     <div style={{
-      width: '100%', minHeight: '100dvh', height: '100dvh',
+      width: '100%', maxWidth: 402, minHeight: '100dvh', height: '100dvh',
+      margin: '0 auto',
       background: '#fff', position: 'relative', overflow: 'hidden',
       fontFamily: 'Barlow, system-ui, sans-serif'
     }}>
