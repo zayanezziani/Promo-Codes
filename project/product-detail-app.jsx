@@ -330,15 +330,9 @@ function BundleTile({ bundle, selected, onSelect }) {
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
               <div style={{
-                fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 14,
-                lineHeight: '16px', color: C.text900, whiteSpace: 'nowrap'
+                fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16,
+                lineHeight: '20px', color: C.text900, whiteSpace: 'nowrap'
               }}>{bundle.points} FC Points</div>
-              {bundle.sub && (
-                <div style={{
-                  fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 13,
-                  lineHeight: '14px', color: C.text500, whiteSpace: 'nowrap'
-                }}>{bundle.sub}</div>
-              )}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
               <div style={{
@@ -564,7 +558,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
               <button onClick={onRemove} style={{
                 background: 'transparent', border: 0, padding: '0 4px', cursor: 'pointer',
                 fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16, lineHeight: '20px',
-                color: C.bluePrimary, letterSpacing: 0.1
+                color: '#475467', letterSpacing: 0.1
               }}>Remove</button>
             ) : (
               <button onClick={onUse} style={{
@@ -585,7 +579,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
 function PromoToast({ visible, message }) {
   return (
     <div style={{
-      position: 'absolute', top: 60, left: 16, right: 16, zIndex: 50,
+      position: 'absolute', top: 66, left: 16, right: 16, zIndex: 50,
       display: 'flex', justifyContent: 'center', pointerEvents: 'none'
     }}>
       <div style={{
@@ -617,10 +611,10 @@ function PromoToast({ visible, message }) {
 
 // ─── product detail screen ──────────────────────────────────────────
 const BUNDLES = [
-  { id: 'b1', points: '1,050',  price: 5,  original: 6,  discount: '5% off',  badge: 'Most Popular', sub: 'Starter pack' },
-  { id: 'b2', points: '2,200',  price: 8,  original: 10, discount: '10% off', sub: '+10% bonus silver' },
-  { id: 'b3', points: '5,900',  price: 12, original: 15, discount: '15% off', sub: '+15% bonus silver' },
-  { id: 'b4', points: '12,000', price: 20, original: 25, discount: '20% off', sub: '+20% bonus silver' }
+  { id: 'b1', points: '1,050',  price: 5,  original: 6,  discount: '5% off',  badge: 'Most Popular' },
+  { id: 'b2', points: '2,200',  price: 8,  original: 10, discount: '10% off' },
+  { id: 'b3', points: '5,900',  price: 12, original: 15, discount: '15% off' },
+  { id: 'b4', points: '12,000', price: 20, original: 25, discount: '20% off' }
 ];
 
 const CHIPS = [
@@ -631,8 +625,8 @@ const CHIPS = [
 
 function ProductDetail({ onProceed }) {
   const [activeChip, setActiveChip] = useState('all');
-  const [selectedId, setSelectedId] = useState('b1');
-  const selected = BUNDLES.find(b => b.id === selectedId) || BUNDLES[0];
+  const [selectedId, setSelectedId] = useState(null);
+  const selected = BUNDLES.find(b => b.id === selectedId);
 
   return (
     <div style={{
@@ -671,9 +665,10 @@ function ProductDetail({ onProceed }) {
       </div>
 
       <StickyFooter
-        total={selected.price}
+        total={selected ? selected.price : 0}
         cta="Proceed to Checkout"
-        onClick={() => onProceed(selected)}
+        onClick={() => selected && onProceed(selected)}
+        ctaDisabled={!selected}
       />
     </div>
   );
@@ -861,7 +856,7 @@ function Checkout({ bundle, onBack, onComplete }) {
   const [savedDetails, setSavedDetails] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [useDiscount, setUseDiscount] = useState(false);
-  const [contactChoice, setContactChoice] = useState(null); // 'profile' | 'different'
+  const [contactChoice, setContactChoice] = useState('profile'); // 'profile' | 'different'
   const [promoLoadingId, setPromoLoadingId] = useState(null);
   const [promoAppliedId, setPromoAppliedId] = useState(null);
   const [promoHighlightId, setPromoHighlightId] = useState(null);
@@ -1004,13 +999,11 @@ function Checkout({ bundle, onBack, onComplete }) {
                   <span style={{ color: C.text900 }}>SAFE CHECKOUT</span>
                   <span style={{ color: '#027A48' }}>GUARANTEED</span>
                 </div>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <circle cx="11" cy="11" r="8" fill="none" stroke="#475467" strokeWidth="1.4" />
-                  <path d="M11 3a8 8 0 0 1 0 16M3 11h16" fill="none" stroke="#475467" strokeWidth="1.4" />
-                  <path d="M6 7q5 2 10 0M6 15q5 -2 10 0" fill="none" stroke="#475467" strokeWidth="1.2" />
-                  <circle cx="18" cy="18" r="5" fill="#027A48" />
-                  <path d="M15.8 18l1.6 1.6 3.2-3.2" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <img
+                  src="https://res.cloudinary.com/dk6ygi5j6/image/upload/v1778878695/Safe_Checkout_lyepdu.svg"
+                  alt=""
+                  style={{ width: 20, height: 20, display: 'block' }}
+                />
               </div>
             }
           />
@@ -1033,6 +1026,40 @@ function Checkout({ bundle, onBack, onComplete }) {
           }}>
             Can&apos;t find my payment method? <span style={{ color: C.bluePrimary, fontWeight: 600 }}>Let us know!</span>
           </button>
+        </div>
+
+        {/* Promo Code */}
+        <div style={{ paddingTop: 40 }}>
+          <SectionDescription
+            title="PROMO CODE"
+            done={done.promo}
+            action={
+              <button style={{
+                background: 'transparent', border: 0, padding: 0, cursor: 'pointer',
+                fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
+                lineHeight: '20px', color: C.bluePrimary
+              }}>Add Promo Code</button>
+            }
+          />
+          <div className="scroller" style={{
+            display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4,
+            scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
+            scrollPaddingLeft: 16,
+            margin: '0 -16px', padding: '0 16px'
+          }}>
+            {PROMO_CODES.map(c => (
+              <div key={c.id} style={{ scrollSnapAlign: 'start', flex: '0 0 280px' }}>
+                <PromoCard
+                  code={c}
+                  applied={promoAppliedId === c.id}
+                  loading={promoLoadingId === c.id}
+                  highlight={promoHighlightId === c.id}
+                  onUse={() => handleUsePromo(c.id)}
+                  onRemove={() => handleRemovePromo(c.id)}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Get a Discount */}
@@ -1062,14 +1089,14 @@ function Checkout({ bundle, onBack, onComplete }) {
               <span style={{
                 fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16,
                 lineHeight: '20px', color: C.text900
-              }}>700,000 Points</span>
+              }}>7,000 Points</span>
               <span style={{
                 fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 14,
                 lineHeight: '16px', color: C.text500
               }}>Spend Points and pay <strong style={{ color: C.text900 }}>$3 less</strong></span>
             </div>
             <img
-              src="https://res.cloudinary.com/dk6ygi5j6/image/upload/v1778591095/CDP_fz03xk.png"
+              src="https://res.cloudinary.com/dk6ygi5j6/image/upload/v1778878316/CDP_fz03xk.png"
               alt=""
               style={{
                 width: 93.12, height: 87.62, display: 'block',
@@ -1143,40 +1170,6 @@ function Checkout({ bundle, onBack, onComplete }) {
                 lineHeight: '20px', color: C.text900
               }}>Use different information</span>
             </div>
-          </div>
-        </div>
-
-        {/* Promo Code */}
-        <div style={{ paddingTop: 40 }}>
-          <SectionDescription
-            title="PROMO CODE"
-            done={done.promo}
-            action={
-              <button style={{
-                background: 'transparent', border: 0, padding: 0, cursor: 'pointer',
-                fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
-                lineHeight: '20px', color: C.bluePrimary
-              }}>Add Promo Code</button>
-            }
-          />
-          <div className="scroller" style={{
-            display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4,
-            scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
-            scrollPaddingLeft: 16,
-            margin: '0 -16px', padding: '0 16px'
-          }}>
-            {PROMO_CODES.map(c => (
-              <div key={c.id} style={{ scrollSnapAlign: 'start', flex: '0 0 280px' }}>
-                <PromoCard
-                  code={c}
-                  applied={promoAppliedId === c.id}
-                  loading={promoLoadingId === c.id}
-                  highlight={promoHighlightId === c.id}
-                  onUse={() => handleUsePromo(c.id)}
-                  onRemove={() => handleRemovePromo(c.id)}
-                />
-              </div>
-            ))}
           </div>
         </div>
 
