@@ -579,7 +579,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
 function PromoToast({ visible, message }) {
   return (
     <div style={{
-      position: 'absolute', top: 66, left: 16, right: 16, zIndex: 50,
+      position: 'absolute', top: 64, left: 16, right: 16, zIndex: 50,
       display: 'flex', justifyContent: 'center', pointerEvents: 'none'
     }}>
       <div style={{
@@ -725,7 +725,7 @@ function PaymentRow({ method, selected, onSelect, isFirst, isLast }) {
       onClick={onSelect}
       style={{
         background: selected ? C.blueLight : C.surfaceAlt,
-        padding: '16px 12px',
+        padding: '12px 12px 16px',
         borderTopLeftRadius: isFirst ? 12 : 0, borderTopRightRadius: isFirst ? 12 : 0,
         borderBottomLeftRadius: isLast ? 12 : 0, borderBottomRightRadius: isLast ? 12 : 0,
         border: selected ? `1px solid ${C.bluePrimary}` : `1px solid transparent`,
@@ -735,34 +735,44 @@ function PaymentRow({ method, selected, onSelect, isFirst, isLast }) {
         marginBottom: selected ? -1 : 0,
         position: 'relative', zIndex: selected ? 1 : 0,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        cursor: 'pointer', transition: 'background-color 200ms ease, border-color 200ms ease',
-        minHeight: 56
+        cursor: 'pointer', transition: 'background-color 200ms ease, border-color 200ms ease'
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{
           width: 16, height: 16, borderRadius: '50%',
-          border: `1.5px solid ${selected ? C.bluePrimary : C.borderInput}`,
+          border: `1px solid ${selected ? C.bluePrimary : C.borderInput}`,
           background: selected ? C.blueLight : C.white,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0, transition: 'border-color 200ms ease, background-color 200ms ease'
+          flexShrink: 0, overflow: 'hidden',
+          transition: 'border-color 200ms ease, background-color 200ms ease'
         }}>
-          {selected && <div style={{
-            width: 8, height: 8, borderRadius: '50%', background: C.bluePrimary
-          }} />}
+          {selected && <CheckIcon size={10} color={C.bluePrimary} strokeW={3} />}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{
-            fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
+            fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 14,
             lineHeight: '20px', color: C.text900
           }}>{method.name}</span>
           {method.sub && (
             <span style={{
-              fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 14,
-              lineHeight: '16px', color: C.text500
+              fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 12,
+              lineHeight: '16px', color: C.text900
             }}>{method.sub}</span>
           )}
         </div>
+        {method.preferred && (
+          <div style={{
+            background: '#F0F9FF', border: '1px solid #D1E9FF',
+            borderRadius: 9, padding: '2px 8px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <span style={{
+              fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 12,
+              lineHeight: '16px', color: '#026AA2', letterSpacing: 0
+            }}>PREFERRED</span>
+          </div>
+        )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {method.trailing}
@@ -854,7 +864,7 @@ const GemsLogo = () => (
 function Checkout({ bundle, onBack, onComplete }) {
   const [typedPlayerId, setTypedPlayerId] = useState('');
   const [savedDetails, setSavedDetails] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState('mc8099');
   const [useDiscount, setUseDiscount] = useState(false);
   const [contactChoice, setContactChoice] = useState('profile'); // 'profile' | 'different'
   const [promoLoadingId, setPromoLoadingId] = useState(null);
@@ -893,7 +903,7 @@ function Checkout({ bundle, onBack, onComplete }) {
       setPromoHighlightId(id);
       setPromoToast({ visible: true, message: 'Promo code applied!' });
       after(450, () => setPromoHighlightId(null));
-      after(1300, () => setPromoToast(s => ({ ...s, visible: false })));
+      after(2000, () => setPromoToast(s => ({ ...s, visible: false })));
     });
   };
   const handleRemovePromo = (id) => {
@@ -904,34 +914,13 @@ function Checkout({ bundle, onBack, onComplete }) {
       setPromoAppliedId(null);
       setPromoHighlightId(null);
       setPromoToast({ visible: true, message: 'Promo code removed' });
-      after(1300, () => setPromoToast(s => ({ ...s, visible: false })));
+      after(2000, () => setPromoToast(s => ({ ...s, visible: false })));
     });
   };
 
   const paymentMethods = [
-    { id: 'card',     name: 'Card', trailing: (<><LogoTile width={34}><VisaLogo /></LogoTile><LogoTile width={34}><MasterLogo /></LogoTile></>) },
-    { id: 'ussd',     name: 'USSD', trailing: (<>
-      <LogoTile width={34}><StanbicLogo /></LogoTile>
-      <LogoTile width={34}><ProvidusLogo /></LogoTile>
-      <LogoTile width={34}><GTBankLogo /></LogoTile>
-      <span style={{
-        fontFamily:'Barlow, sans-serif', fontSize:12, fontWeight:500,
-        color:'#98A2B3', border:`1px solid ${C.borderInput}`, borderRadius:4,
-        padding:'2px 8px', letterSpacing:1, textTransform:'uppercase', lineHeight:'16px'
-      }}>+13</span>
-    </>) },
-    { id: 'paga',     name: 'Paga',     trailing: <LogoTile width={34}><PagaLogo /></LogoTile> },
-    { id: 'chipper',  name: 'Chipper',  trailing: <LogoTile width={34}><ChipperLogo /></LogoTile> },
-    { id: 'transfer', name: 'Bank Transfer', trailing: <LogoTile width={42}><AffirmLogo /></LogoTile> },
-    { id: 'kuda',     name: 'Kuda Bank',     trailing: <LogoTile width={34}><KudaLogo /></LogoTile> },
-    { id: 'gems',     name: 'Gems', sub: 'Balance: 5,000', trailing: (<>
-      <div style={{
-        padding:'2px 8px', borderRadius:4, background:'#ECFDF3',
-        border:'1px solid #D1FADF', color:'#027A48',
-        fontFamily:'Barlow, sans-serif', fontSize:12, fontWeight:500, lineHeight:'16px'
-      }}>Cost: 400</div>
-      <LogoTile width={34}><GemsLogo /></LogoTile>
-    </>) }
+    { id: 'mc8099', name: 'Mastercard ••••8099', sub: 'Exp.  12/26', preferred: true,  trailing: <LogoTile width={34}><MasterLogo /></LogoTile> },
+    { id: 'mc3478', name: 'Mastercard ••••3478', sub: 'Exp.  08/27', preferred: false, trailing: <LogoTile width={34}><MasterLogo /></LogoTile> }
   ];
 
   return (
@@ -1020,11 +1009,13 @@ function Checkout({ bundle, onBack, onComplete }) {
             ))}
           </div>
           <button style={{
-            marginTop: 0, width: '100%', height: 44, borderRadius: 8,
-            background: 'transparent', border: 0, cursor: 'pointer',
-            fontFamily: 'Barlow, sans-serif', fontSize: 15, color: C.text600
+            marginTop: 0, width: '100%', height: 44, padding: '12px 24px',
+            borderRadius: 8, background: 'transparent', border: 0, cursor: 'pointer',
+            fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 14,
+            lineHeight: '20px', color: C.bluePrimary,
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}>
-            Can&apos;t find my payment method? <span style={{ color: C.bluePrimary, fontWeight: 600 }}>Let us know!</span>
+            Add Payment Method
           </button>
         </div>
 
