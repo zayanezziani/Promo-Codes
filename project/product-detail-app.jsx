@@ -579,7 +579,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
 function PromoToast({ visible, message }) {
   return (
     <div style={{
-      position: 'absolute', top: 66, left: 16, right: 16, zIndex: 50,
+      position: 'absolute', top: 64, left: 16, right: 16, zIndex: 50,
       display: 'flex', justifyContent: 'center', pointerEvents: 'none'
     }}>
       <div style={{
@@ -893,7 +893,7 @@ function Checkout({ bundle, onBack, onComplete }) {
       setPromoHighlightId(id);
       setPromoToast({ visible: true, message: 'Promo code applied!' });
       after(450, () => setPromoHighlightId(null));
-      after(1300, () => setPromoToast(s => ({ ...s, visible: false })));
+      after(2000, () => setPromoToast(s => ({ ...s, visible: false })));
     });
   };
   const handleRemovePromo = (id) => {
@@ -904,7 +904,7 @@ function Checkout({ bundle, onBack, onComplete }) {
       setPromoAppliedId(null);
       setPromoHighlightId(null);
       setPromoToast({ visible: true, message: 'Promo code removed' });
-      after(1300, () => setPromoToast(s => ({ ...s, visible: false })));
+      after(2000, () => setPromoToast(s => ({ ...s, visible: false })));
     });
   };
 
