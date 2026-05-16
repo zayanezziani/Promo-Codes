@@ -579,7 +579,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
 function PromoToast({ visible, message }) {
   return (
     <div style={{
-      position: 'absolute', top: 64, left: 16, right: 16, zIndex: 50,
+      position: 'absolute', top: 3, left: 16, right: 16, zIndex: 50,
       display: 'flex', justifyContent: 'center', pointerEvents: 'none'
     }}>
       <div style={{
