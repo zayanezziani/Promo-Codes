@@ -187,15 +187,15 @@ function PromoCard({ code, applied, loading, highlight, highlightColor, onUse, o
   const bg = highlight ? highlightColor || C.blueHighlight : C.card;
   return (
     <div style={{
-      width: 'fit-content', borderRadius: 12,
+      width: 280, borderRadius: 12,
       background: bg, border: `1px solid ${C.borderSoft}`,
       transition: 'background-color 360ms ease',
-      boxSizing: 'border-box', padding: '12px 16px',
+      boxSizing: 'border-box', padding: 16,
       display: 'flex', flexDirection: 'column', gap: 8,
       position: 'relative'
     }}>
       {loading ?
-      <div style={{ minHeight: 97, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: 121, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Spinner />
         </div> :
 
