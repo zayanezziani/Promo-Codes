@@ -579,7 +579,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
 function PromoToast({ visible, message }) {
   return (
     <div style={{
-      position: 'absolute', top: 64, left: 16, right: 16, zIndex: 50,
+      position: 'absolute', top: 3, left: 16, right: 16, zIndex: 50,
       display: 'flex', justifyContent: 'center', pointerEvents: 'none'
     }}>
       <div style={{
@@ -741,13 +741,15 @@ function PaymentRow({ method, selected, onSelect, isFirst, isLast }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{
           width: 16, height: 16, borderRadius: '50%',
-          border: `1px solid ${selected ? C.bluePrimary : C.borderInput}`,
-          background: selected ? C.blueLight : C.white,
+          border: `1.5px solid ${selected ? C.bluePrimary : C.borderInput}`,
+          background: C.white,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0, overflow: 'hidden',
+          flexShrink: 0,
           transition: 'border-color 200ms ease, background-color 200ms ease'
         }}>
-          {selected && <CheckIcon size={10} color={C.bluePrimary} strokeW={3} />}
+          {selected && (
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.bluePrimary }} />
+          )}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{
