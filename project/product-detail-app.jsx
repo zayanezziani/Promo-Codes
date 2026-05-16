@@ -509,7 +509,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
   const bg = highlight ? C.blueLight : C.surface;
   return (
     <div style={{
-      width: 280, height: 145, borderRadius: 12,
+      width: 'fit-content', borderRadius: 12,
       background: bg, border: `1px solid ${C.borderSoft}`,
       transition: 'background-color 360ms ease',
       boxSizing: 'border-box', padding: '12px 16px',
@@ -1041,7 +1041,7 @@ function Checkout({ bundle, onBack, onComplete }) {
             margin: '0 -16px', padding: '0 16px'
           }}>
             {PROMO_CODES.map(c => (
-              <div key={c.id} style={{ scrollSnapAlign: 'start', flex: '0 0 280px' }}>
+              <div key={c.id} style={{ scrollSnapAlign: 'start', flex: '0 0 auto' }}>
                 <PromoCard
                   code={c}
                   applied={promoAppliedId === c.id}
