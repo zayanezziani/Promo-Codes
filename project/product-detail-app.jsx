@@ -179,7 +179,7 @@ function ProductHeader({ onBack }) {
         color: C.text500
       }}>
         <SearchIcon size={18} />
-        <span style={{ flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '20px' }}>
+        <span style={{ flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '24px' }}>
           Search games &amp; more
         </span>
         <MicIcon size={18} />
@@ -238,7 +238,7 @@ function ProductCover() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{
             fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16,
-            lineHeight: '20px', color: C.text900, letterSpacing: 0.2
+            lineHeight: '24px', color: C.text900, letterSpacing: 0.2
           }}>EA SPORTS FC™ MOBILE</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={{ display: 'flex', gap: 8 }}>
@@ -262,7 +262,7 @@ function Pill({ icon, label, children }) {
     }}>
       {icon}
       <span style={{
-        fontFamily: 'Barlow, sans-serif', fontSize: 14, lineHeight: '16px',
+        fontFamily: 'Barlow, sans-serif', fontSize: 14, lineHeight: '20px',
         color: C.textHeader
       }}>{children || label}</span>
     </div>
@@ -288,7 +288,7 @@ function ChipRow({ active, onChange, chips }) {
               border: 0, padding: isActive ? '4px 20px' : '2px 8px',
               borderRadius: 16, cursor: 'pointer',
               fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
-              lineHeight: '20px',
+              lineHeight: '24px',
               color: isActive ? C.blueDark : C.text600,
               whiteSpace: 'nowrap'
             }}
@@ -331,13 +331,13 @@ function BundleTile({ bundle, selected, onSelect }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
               <div style={{
                 fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16,
-                lineHeight: '20px', color: C.text900, whiteSpace: 'nowrap'
+                lineHeight: '24px', color: C.text900, whiteSpace: 'nowrap'
               }}>{bundle.points} FC Points</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
               <div style={{
                 fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16,
-                lineHeight: '20px', color: C.bluePrice, whiteSpace: 'nowrap'
+                lineHeight: '24px', color: C.bluePrice, whiteSpace: 'nowrap'
               }}>${bundle.price}</div>
               {bundle.discount && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -346,14 +346,14 @@ function BundleTile({ bundle, selected, onSelect }) {
                     background: C.successGreen, color: C.white, borderRadius: 16,
                     padding: '2px 4px',
                     fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 12,
-                    lineHeight: '14px'
+                    lineHeight: '16px'
                   }}>
                     <TagSolid size={10} />
                     {bundle.discount}
                   </span>
                   {bundle.original && (
                     <span style={{
-                      fontFamily: 'Barlow, sans-serif', fontSize: 12, lineHeight: '14px',
+                      fontFamily: 'Barlow, sans-serif', fontSize: 12, lineHeight: '16px',
                       color: C.text600, textDecoration: 'line-through'
                     }}>${bundle.original}</span>
                   )}
@@ -373,7 +373,7 @@ function BundleTile({ bundle, selected, onSelect }) {
             background: bundle.badgeColor || C.warning, color: C.white,
             padding: '2px 6px 2px 4px', borderRadius: '4px 0 0 4px',
             fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 12,
-            lineHeight: '14px',
+            lineHeight: '16px',
             display: 'flex', alignItems: 'center', gap: 4
           }}>
             <AwardIcon size={10} />
@@ -402,11 +402,11 @@ function StickyFooter({ total, cta, onClick, ctaDisabled }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{
             fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
-            lineHeight: '20px', color: C.text600
+            lineHeight: '24px', color: C.text600
           }}>Total</span>
           <span style={{
             fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 14,
-            lineHeight: '16px', color: C.text500
+            lineHeight: '20px', color: C.text500
           }}>(Service fee is applied)</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -469,7 +469,7 @@ function SectionDescriptionWithSubtitle({ title, done, subtitle, trailing }) {
         {subtitle && (
           <span style={{
             fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 14,
-            lineHeight: '16px', color: C.text900
+            lineHeight: '20px', color: C.text900
           }}>{subtitle}</span>
         )}
       </div>
@@ -530,7 +530,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
               <TagSolid size={16} color={C.bluePrimary} />
               <span style={{
                 fontFamily: 'Barlow, sans-serif', fontWeight: 400,
-                lineHeight: '16px', color: C.bluePrimary, fontSize: 14
+                lineHeight: '20px', color: C.bluePrimary, fontSize: 14
               }}>{code.code}</span>
             </div>
             <span style={{
@@ -551,13 +551,13 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
                 <path {...stroke()} d="M12 7v5l3 2" />
               </svg>
               <span style={{
-                fontFamily: 'Barlow, sans-serif', fontSize: 14, lineHeight: '16px', color: '#667085'
+                fontFamily: 'Barlow, sans-serif', fontSize: 14, lineHeight: '20px', color: '#667085'
               }}>{code.expires}</span>
             </div>
             {applied ? (
               <button onClick={onRemove} style={{
                 background: 'transparent', border: 0, padding: '0 4px', cursor: 'pointer',
-                fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16, lineHeight: '20px',
+                fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16, lineHeight: '24px',
                 color: '#475467', letterSpacing: 0.1
               }}>Remove</button>
             ) : (
@@ -565,7 +565,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
                 height: 36, borderRadius: 8, cursor: 'pointer',
                 background: C.white, border: `1px solid ${C.borderInput}`,
                 boxShadow: '0 1px 2px rgba(16,24,40,0.05)',
-                fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '20px',
+                fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '24px',
                 color: C.text600, padding: '0 24px', fontWeight: 500
               }}>Use</button>
             )}
@@ -598,7 +598,7 @@ function PromoToast({ visible, message }) {
           <CheckIcon size={18} color={C.bluePrimary} strokeW={2.6} />
         </span>
         <span style={{
-          flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '20px',
+          flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '24px',
           color: C.text900, fontWeight: 500
         }}>{message}</span>
         <span style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -653,7 +653,7 @@ function ProductDetail({ onProceed }) {
           marginTop: 8, height: 40, padding: 0, border: 0,
           background: 'transparent', color: C.bluePrimary, cursor: 'pointer',
           fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
-          lineHeight: '20px',
+          lineHeight: '24px',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
           alignSelf: 'center'
         }}>
@@ -707,7 +707,7 @@ function InputField({ value, onChange, placeholder, type = 'text', inputMode, pa
         onBlur={() => setFocused(false)}
         style={{
           flex: 1, height: '100%', border: 0, outline: 'none', background: 'transparent',
-          fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '20px',
+          fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '24px',
           color: filled ? C.text900 : C.text500,
           transition: `color 220ms ${EASE_OUT}`,
           padding: 0
@@ -1030,7 +1030,7 @@ function Checkout({ bundle, onBack, onComplete }) {
               <button style={{
                 background: 'transparent', border: 0, padding: 0, cursor: 'pointer',
                 fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
-                lineHeight: '20px', color: C.bluePrimary
+                lineHeight: '24px', color: C.bluePrimary
               }}>Add Promo Code</button>
             }
           />
@@ -1081,11 +1081,11 @@ function Checkout({ bundle, onBack, onComplete }) {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
               <span style={{
                 fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16,
-                lineHeight: '20px', color: C.text900
+                lineHeight: '24px', color: C.text900
               }}>7,000 Points</span>
               <span style={{
                 fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 14,
-                lineHeight: '16px', color: C.text500
+                lineHeight: '20px', color: C.text500
               }}>Spend Points and pay <strong style={{ color: C.text900 }}>$3 less</strong></span>
             </div>
             <img
@@ -1128,11 +1128,11 @@ function Checkout({ bundle, onBack, onComplete }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <span style={{
                   fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
-                  lineHeight: '20px', color: C.text900
+                  lineHeight: '24px', color: C.text900
                 }}>Use profile information</span>
                 <span style={{
                   fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 14,
-                  lineHeight: '16px', color: C.text500
+                  lineHeight: '20px', color: C.text500
                 }}>contact@zayan.design   |   +212639182215</span>
               </div>
             </div>
@@ -1160,7 +1160,7 @@ function Checkout({ bundle, onBack, onComplete }) {
               </div>
               <span style={{
                 fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
-                lineHeight: '20px', color: C.text900
+                lineHeight: '24px', color: C.text900
               }}>Use different information</span>
             </div>
           </div>
