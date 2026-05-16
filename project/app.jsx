@@ -187,7 +187,7 @@ function PromoCard({ code, applied, loading, highlight, highlightColor, onUse, o
   const bg = highlight ? highlightColor || C.blueHighlight : C.card;
   return (
     <div style={{
-      width: 280, borderRadius: 12,
+      width: 'fit-content', borderRadius: 12,
       background: bg, border: `1px solid ${C.borderSoft}`,
       transition: 'background-color 360ms ease',
       boxSizing: 'border-box', padding: '12px 16px',
@@ -512,7 +512,7 @@ function ProductDetail({ appliedId, onUse, onRemove, onAddPromo, loadingId, high
             margin: "0px -16px", padding: "0px 16px"
           }} data-comment-anchor="07f3041e3b-div-495-11">
             {initialCodes.map((c) =>
-            <div key={c.id} style={{ scrollSnapAlign: 'start', flex: '0 0 280px' }}>
+            <div key={c.id} style={{ scrollSnapAlign: 'start', flex: '0 0 auto' }}>
                 <PromoCard
                 code={c}
                 applied={appliedId === c.id}
