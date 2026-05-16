@@ -128,8 +128,10 @@ const MinusIcon = ({ size = 18, color = '#475467' }) =>
     <path {...stroke({ strokeWidth: 2 })} d="M5 12h14" />
   </Icon>;
 const InfoCircle = ({ size = 16, color = '#98A2B3' }) =>
-  <svg width={size} height={size} viewBox="0 0 24 24" style={{ display: 'block' }}>
-    <path fill={color} d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z" />
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: 'block' }}>
+    <circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.6" />
+    <path d="M12 8h.01" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M12 12v4" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
   </svg>;
 
 // nav icons
@@ -509,7 +511,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
   const bg = highlight ? C.blueLight : C.surface;
   return (
     <div style={{
-      width: 280, height: 145, borderRadius: 12,
+      width: 280, borderRadius: 12,
       background: bg, border: `1px solid ${C.borderSoft}`,
       transition: 'background-color 360ms ease',
       boxSizing: 'border-box', padding: '12px 16px',
@@ -517,7 +519,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
       position: 'relative', flexShrink: 0
     }}>
       {loading ? (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ minHeight: 125, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Spinner />
         </div>
       ) : (
@@ -725,7 +727,7 @@ function PaymentRow({ method, selected, onSelect, isFirst, isLast }) {
       onClick={onSelect}
       style={{
         background: selected ? C.blueLight : C.surfaceAlt,
-        padding: '12px 12px 16px',
+        padding: 16,
         borderTopLeftRadius: isFirst ? 12 : 0, borderTopRightRadius: isFirst ? 12 : 0,
         borderBottomLeftRadius: isLast ? 12 : 0, borderBottomRightRadius: isLast ? 12 : 0,
         border: selected ? `1px solid ${C.bluePrimary}` : `1px solid transparent`,
@@ -751,15 +753,15 @@ function PaymentRow({ method, selected, onSelect, isFirst, isLast }) {
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.bluePrimary }} />
           )}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <span style={{
-            fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 14,
-            lineHeight: '20px', color: C.text900
+            fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
+            lineHeight: '24px', color: C.text900
           }}>{method.name}</span>
           {method.sub && (
             <span style={{
-              fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 12,
-              lineHeight: '16px', color: C.text900
+              fontFamily: 'Barlow, sans-serif', fontWeight: 400, fontSize: 14,
+              lineHeight: '20px', color: C.text500
             }}>{method.sub}</span>
           )}
         </div>
@@ -1011,13 +1013,17 @@ function Checkout({ bundle, onBack, onComplete }) {
             ))}
           </div>
           <button style={{
-            marginTop: 0, width: '100%', height: 44, padding: '12px 24px',
-            borderRadius: 8, background: 'transparent', border: 0, cursor: 'pointer',
-            fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 14,
-            lineHeight: '20px', color: C.bluePrimary,
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
+            marginTop: 8, width: '100%', height: 40, padding: 0,
+            border: 0, background: 'transparent', color: C.bluePrimary, cursor: 'pointer',
+            fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
+            lineHeight: '24px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            gap: 6
           }}>
-            Add Payment Method
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" fill="none" stroke="#025EDE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Add payment method
           </button>
         </div>
 
@@ -1031,7 +1037,7 @@ function Checkout({ bundle, onBack, onComplete }) {
                 background: 'transparent', border: 0, padding: 0, cursor: 'pointer',
                 fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
                 lineHeight: '24px', color: C.bluePrimary
-              }}>Add Promo Code</button>
+              }}>Add promo code</button>
             }
           />
           <div className="scroller" style={{
