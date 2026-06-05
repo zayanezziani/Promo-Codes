@@ -201,8 +201,8 @@ function ProductHeader({ onBack }) {
   );
 }
 
-// checkout header: back / Checkout title centered
-function CheckoutHeader({ onBack }) {
+// checkout header: back / title centered
+function CheckoutHeader({ onBack, title = 'Checkout' }) {
   return (
     <div style={{
       height: 64, background: C.white, padding: '14px 16px',
@@ -221,7 +221,7 @@ function CheckoutHeader({ onBack }) {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontFamily: 'Barlow, sans-serif', fontWeight: 700, fontSize: 18,
         color: C.text900, pointerEvents: 'none'
-      }}>Checkout</div>
+      }}>{title}</div>
     </div>
   );
 }
@@ -507,16 +507,16 @@ function Spinner({ size = 40 }) {
   );
 }
 
-function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
+function PromoCard({ code, applied, loading, highlight, disabled, onUse, onRemove }) {
   const bg = highlight ? C.blueLight : C.surface;
   return (
     <div style={{
-      width: 280, borderRadius: 12,
+      width: '100%', borderRadius: 12,
       background: bg, border: `1px solid ${C.borderSoft}`,
       transition: 'background-color 360ms ease',
       boxSizing: 'border-box', padding: '12px 16px',
       display: 'flex', flexDirection: 'column', gap: 8,
-      position: 'relative', flexShrink: 0
+      position: 'relative', flexShrink: 0, opacity: disabled ? 0.6 : 1
     }}>
       {loading ? (
         <div style={{ minHeight: 125, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -556,7 +556,7 @@ function PromoCard({ code, applied, loading, highlight, onUse, onRemove }) {
                 fontFamily: 'Barlow, sans-serif', fontSize: 14, lineHeight: '20px', color: '#667085'
               }}>{code.expires}</span>
             </div>
-            {applied ? (
+            {disabled ? null : applied ? (
               <button onClick={onRemove} style={{
                 background: 'transparent', border: 0, padding: '0 4px', cursor: 'pointer',
                 fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 16, lineHeight: '24px',
@@ -864,6 +864,131 @@ const GemsLogo = () => (
   </svg>
 );
 
+// ─── add promo code screen ──────────────────────────────────────────
+// codes the user isn't eligible for yet — shown (dimmed) under the "Others" tab
+const OTHER_CODES = [
+  { id: 'd', code: 'WELCOME25', title: '25% off first order', expires: 'Eligible for new users only' },
+  { id: 'e', code: 'BUNDLE15',  title: '15% off bundles',     expires: 'On selected bundles' }
+];
+
+// promo entry field — mirrors the checkout InputField styling (56px, focus ring)
+function PromoInputField({ value, onChange }) {
+  const [focused, setFocused] = useState(false);
+  const filled = value && value.length > 0;
+  const borderColor = focused ? C.bluePrimary : filled ? '#98A2B3' : C.borderInput;
+  return (
+    <div style={{
+      height: 56, padding: '0 16px', borderRadius: 8,
+      border: `1px solid ${borderColor}`,
+      background: C.white, display: 'flex', alignItems: 'center', gap: 10,
+      transition: `border-color 220ms ${EASE_OUT}, box-shadow 220ms ${EASE_OUT}`,
+      boxShadow: focused
+        ? '0 0 0 3px rgba(2, 94, 222, 0.12)'
+        : '0 1px 2px rgba(16, 24, 40, 0.05)'
+    }}>
+      <TagOutlineLg size={20} color={filled ? C.text900 : '#7E7E7E'} />
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value.toUpperCase())}
+        placeholder="Enter Promo Code"
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        style={{
+          flex: 1, height: '100%', border: 0, outline: 'none', background: 'transparent',
+          fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '24px',
+          color: filled ? C.text900 : C.text500,
+          letterSpacing: 0.3, padding: 0
+        }}
+      />
+    </div>
+  );
+}
+
+function AddPromoScreen({ codes, otherCodes, appliedId, loadingId, highlightId, onBack, onUse, onRemove }) {
+  const [tab, setTab] = useState('applicable');
+  const [input, setInput] = useState('');
+  const valid = input.trim().length >= 3;
+  const list = tab === 'applicable' ? codes : otherCodes;
+
+  return (
+    <div style={{
+      width: '100%', height: '100%', background: C.bg,
+      display: 'flex', flexDirection: 'column', overflow: 'hidden'
+    }}>
+      <CheckoutHeader onBack={onBack} title="Promo Codes" />
+
+      <div className="scroller" style={{
+        flex: 1, overflowY: 'auto', overflowX: 'hidden',
+        padding: '0 16px 24px'
+      }}>
+        {/* entry */}
+        <div style={{ paddingTop: 24 }}>
+          <div style={{
+            background: C.surfaceAlt, borderRadius: 12, padding: 16,
+            display: 'flex', flexDirection: 'column', gap: 12
+          }}>
+            <PromoInputField value={input} onChange={setInput} />
+            <button
+              disabled={!valid}
+              onClick={() => valid && onUse(codes[0].id)}
+              style={{
+                width: '100%', height: 48, borderRadius: 8, border: 0,
+                cursor: valid ? 'pointer' : 'default',
+                background: valid ? C.bluePrimary : '#A8C7FA', color: C.white,
+                fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 18,
+                lineHeight: '24px',
+                boxShadow: '0 1px 2px rgba(16,24,40,0.05)',
+                transition: 'background-color 200ms ease'
+              }}
+            >Use</button>
+          </div>
+        </div>
+
+        {/* applicable / others */}
+        <div style={{ paddingTop: 32 }}>
+          <div style={{ display: 'flex', gap: 24, marginBottom: 16 }}>
+            {['applicable', 'others'].map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                style={{
+                  background: 'transparent', border: 0, padding: '0 0 6px', cursor: 'pointer',
+                  fontFamily: 'Barlow, sans-serif', fontWeight: 700, fontSize: 18,
+                  lineHeight: '24px',
+                  color: tab === t ? C.text900 : 'rgba(16,24,40,0.4)',
+                  position: 'relative'
+                }}
+              >
+                {t === 'applicable' ? 'Applicable' : 'Others'}
+                {tab === t && (
+                  <span style={{
+                    position: 'absolute', left: 0, right: 0, bottom: 0, height: 2,
+                    background: C.text900, borderRadius: 2
+                  }} />
+                )}
+              </button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {list.map((c) => (
+              <PromoCard
+                key={c.id}
+                code={c}
+                applied={appliedId === c.id}
+                loading={loadingId === c.id}
+                highlight={highlightId === c.id}
+                disabled={tab === 'others'}
+                onUse={() => onUse(c.id)}
+                onRemove={() => onRemove(c.id)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── checkout screen ────────────────────────────────────────────────
 function Checkout({ bundle, onBack, onComplete }) {
   const [typedPlayerId, setTypedPlayerId] = useState('');
@@ -875,6 +1000,7 @@ function Checkout({ bundle, onBack, onComplete }) {
   const [promoAppliedId, setPromoAppliedId] = useState(null);
   const [promoHighlightId, setPromoHighlightId] = useState(null);
   const [promoToast, setPromoToast] = useState({ visible: false, message: '' });
+  const [showAddPromo, setShowAddPromo] = useState(false);
 
   const timersRef = useRef([]);
   useEffect(() => () => { timersRef.current.forEach(clearTimeout); }, []);
@@ -922,12 +1048,24 @@ function Checkout({ bundle, onBack, onComplete }) {
     });
   };
 
+  // from the Add Promo Code screen: slide back to checkout, then run the flow
+  // so the loader / highlight / toast all play out on the checkout carousel
+  const handleApplyFromAdd = (id) => {
+    setShowAddPromo(false);
+    after(220, () => handleUsePromo(id));
+  };
+  const handleRemoveFromAdd = (id) => {
+    setShowAddPromo(false);
+    after(220, () => handleRemovePromo(id));
+  };
+
   const paymentMethods = [
     { id: 'mc8099', name: 'Mastercard ••••8099', sub: 'Exp.  12/26', preferred: true,  trailing: <LogoTile width={34}><MasterLogo /></LogoTile> },
     { id: 'mc3478', name: 'Mastercard ••••3478', sub: 'Exp.  08/27', preferred: false, trailing: <LogoTile width={34}><MasterLogo /></LogoTile> }
   ];
 
   return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
     <div style={{
       width: '100%', height: '100%', background: C.bg,
       display: 'flex', flexDirection: 'column', overflow: 'hidden'
@@ -1033,7 +1171,7 @@ function Checkout({ bundle, onBack, onComplete }) {
             title="PROMO CODE"
             done={done.promo}
             action={
-              <button style={{
+              <button onClick={() => setShowAddPromo(true)} style={{
                 background: 'transparent', border: 0, padding: 0, cursor: 'pointer',
                 fontFamily: 'Barlow, sans-serif', fontWeight: 500, fontSize: 16,
                 lineHeight: '24px', color: C.bluePrimary
@@ -1181,6 +1319,26 @@ function Checkout({ bundle, onBack, onComplete }) {
         ctaDisabled={!canCheckout}
       />
       <PromoToast visible={promoToast.visible} message={promoToast.message} />
+    </div>
+
+      {/* Add Promo Code sub-screen — slides in from the right */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        transform: showAddPromo ? 'translateX(0)' : 'translateX(100%)',
+        transition: 'transform 360ms cubic-bezier(.2,.8,.2,1)',
+        pointerEvents: showAddPromo ? 'auto' : 'none'
+      }}>
+        <AddPromoScreen
+          codes={PROMO_CODES}
+          otherCodes={OTHER_CODES}
+          appliedId={promoAppliedId}
+          loadingId={promoLoadingId}
+          highlightId={promoHighlightId}
+          onBack={() => setShowAddPromo(false)}
+          onUse={handleApplyFromAdd}
+          onRemove={handleRemoveFromAdd}
+        />
+      </div>
     </div>
   );
 }
