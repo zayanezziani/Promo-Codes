@@ -1068,7 +1068,8 @@ function Checkout({ bundle, onBack, onComplete }) {
     <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
     <div style={{
       width: '100%', height: '100%', background: C.bg,
-      display: 'flex', flexDirection: 'column', overflow: 'hidden'
+      display: 'flex', flexDirection: 'column', overflow: 'hidden',
+      isolation: 'isolate'
     }}>
       <CheckoutHeader onBack={onBack} />
 
