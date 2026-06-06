@@ -3,7 +3,7 @@
 // through Player Info → Payment Method → Get a Discount → Contact Info → Promo Code
 // as each section is progressively filled.
 
-const { useState, useEffect, useRef, useCallback, useMemo } = React;
+const { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } = React;
 
 // ─── design tokens (from Figma) ──────────────────────────────────────
 const C = {
@@ -132,6 +132,12 @@ const InfoCircle = ({ size = 16, color = '#98A2B3' }) =>
     <circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.6" />
     <path d="M12 8h.01" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
     <path d="M12 12v4" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
+  </svg>;
+const AlertCircle = ({ size = 24, color = '#D92D20' }) =>
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: 'block' }}>
+    <circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.8" />
+    <path d="M12 7.5v5.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M12 16.5h.01" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
   </svg>;
 
 // nav icons
@@ -680,6 +686,54 @@ function ProductDetail({ onProceed }) {
 // ease-out micro-interactions: state transitions feel snappy on enter, gentle on settle
 const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
 
+// FLIP list animation: when an item is added to `ids`, the new item fades in
+// *in place* while every pre-existing item slides (ease-out) from its old
+// position to its new one — keeping the gaps constant. `axis` is 'x' for the
+// horizontal carousel, 'y' for the vertical add-promo list. Returns a ref
+// registrar: ref={flip(id)} on each item wrapper.
+function useFlipList(ids, axis, duration = 360) {
+  const refs = useRef(new Map());
+  const prev = useRef(null); // null until the first measurement (no anim on mount)
+  useLayoutEffect(() => {
+    const measure = (el) => (axis === 'x' ? el.offsetLeft : el.offsetTop);
+    const curr = new Map();
+    refs.current.forEach((el, id) => { if (el) curr.set(id, measure(el)); });
+    if (prev.current) {
+      curr.forEach((pos, id) => {
+        const el = refs.current.get(id);
+        if (!el) return;
+        const old = prev.current.get(id);
+        if (old == null) {
+          // brand-new item → fade in without moving
+          el.style.transition = 'none';
+          el.style.opacity = '0';
+          void el.offsetWidth; // commit the start state
+          requestAnimationFrame(() => {
+            el.style.transition = `opacity ${duration}ms ${EASE_OUT}`;
+            el.style.opacity = '1';
+          });
+        } else if (old !== pos) {
+          // existing item → play from its old position to the new one
+          const delta = old - pos;
+          el.style.transition = 'none';
+          el.style.transform = axis === 'x'
+            ? `translateX(${delta}px)` : `translateY(${delta}px)`;
+          void el.offsetWidth;
+          requestAnimationFrame(() => {
+            el.style.transition = `transform ${duration}ms ${EASE_OUT}`;
+            el.style.transform = '';
+          });
+        }
+      });
+    }
+    prev.current = curr;
+  }, [ids]);
+  return (id) => (el) => {
+    if (el) refs.current.set(id, el);
+    else refs.current.delete(id);
+  };
+}
+
 function InputField({ value, onChange, placeholder, type = 'text', inputMode, pattern }) {
   const [focused, setFocused] = useState(false);
   const filled = value && value.length > 0;
@@ -872,43 +926,81 @@ const OTHER_CODES = [
 ];
 
 // promo entry field — mirrors the checkout InputField styling (56px, focus ring)
-function PromoInputField({ value, onChange }) {
+function PromoInputField({ value, onChange, error = false }) {
   const [focused, setFocused] = useState(false);
   const filled = value && value.length > 0;
-  const borderColor = focused ? C.bluePrimary : filled ? '#98A2B3' : C.borderInput;
+  // once the field is active (focused or has a value) a floating "Promo Code"
+  // label sits above the value, matching the design
+  const showLabel = focused || filled;
+  const borderColor = error
+    ? '#FDA29B'
+    : focused ? C.bluePrimary : filled ? '#98A2B3' : C.borderInput;
+  const boxShadow = error
+    ? '0 0 0 3px rgba(217, 45, 32, 0.12)'
+    : focused ? '0 0 0 3px rgba(2, 94, 222, 0.12)' : '0 1px 2px rgba(16, 24, 40, 0.05)';
   return (
     <div style={{
       height: 56, padding: '0 16px', borderRadius: 8,
       border: `1px solid ${borderColor}`,
-      background: C.white, display: 'flex', alignItems: 'center', gap: 10,
+      background: C.white, display: 'flex', alignItems: 'center', gap: 8,
       transition: `border-color 220ms ${EASE_OUT}, box-shadow 220ms ${EASE_OUT}`,
-      boxShadow: focused
-        ? '0 0 0 3px rgba(2, 94, 222, 0.12)'
-        : '0 1px 2px rgba(16, 24, 40, 0.05)'
+      boxShadow
     }}>
       <TagOutlineLg size={20} color={filled ? C.text900 : '#7E7E7E'} />
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value.toUpperCase())}
-        placeholder="Enter Promo Code"
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        style={{
-          flex: 1, height: '100%', border: 0, outline: 'none', background: 'transparent',
-          fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '24px',
-          color: filled ? C.text900 : C.text500,
-          letterSpacing: 0.3, padding: 0
-        }}
-      />
+      <div style={{
+        flex: 1, minWidth: 0, height: '100%',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center'
+      }}>
+        {showLabel && (
+          <span style={{
+            fontFamily: 'Barlow, sans-serif', fontSize: 13, fontWeight: 600,
+            lineHeight: '16px', color: C.bluePrimary
+          }}>Promo Code</span>
+        )}
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value.toUpperCase())}
+          placeholder={showLabel ? '' : 'Enter Promo Code'}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          style={{
+            width: '100%', border: 0, outline: 'none', background: 'transparent',
+            fontFamily: 'Barlow, sans-serif', fontSize: 16, lineHeight: '24px',
+            color: filled ? C.text900 : C.text500,
+            transition: `color 220ms ${EASE_OUT}`,
+            padding: 0
+          }}
+        />
+      </div>
+      {error && <AlertCircle size={24} />}
     </div>
   );
 }
 
-function AddPromoScreen({ codes, otherCodes, appliedId, loadingId, highlightId, onBack, onUse, onRemove }) {
+function AddPromoScreen({ codes, otherCodes, appliedId, loadingId, highlightId, onBack, onUse, onApplyTyped, onRemove }) {
   const [tab, setTab] = useState('applicable');
   const [input, setInput] = useState('');
+  const [error, setError] = useState(false);
   const valid = input.trim().length >= 3;
   const list = tab === 'applicable' ? codes : otherCodes;
+
+  // the only manually-typed code that resolves to a real promo
+  const VALID_TYPED_CODE = 'TEST01';
+  const handleInputChange = (v) => { setInput(v); if (error) setError(false); };
+  const handleUse = () => {
+    if (!valid) return;
+    if (input.trim().toUpperCase() === VALID_TYPED_CODE) {
+      onApplyTyped(input);
+      setInput('');
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
+
+  // FLIP: a freshly added code fades in at the top while the existing codes
+  // slide down to make room (same gap), ease-out
+  const listFlip = useFlipList(list.map(c => c.id).join(','), 'y');
 
   return (
     <div style={{
@@ -927,14 +1019,20 @@ function AddPromoScreen({ codes, otherCodes, appliedId, loadingId, highlightId, 
             background: C.surfaceAlt, borderRadius: 12, padding: 16,
             display: 'flex', flexDirection: 'column', gap: 12
           }}>
-            <PromoInputField value={input} onChange={setInput} />
+            <PromoInputField value={input} onChange={handleInputChange} error={error} />
+            {error && (
+              <span style={{
+                fontFamily: 'Barlow, sans-serif', fontSize: 15, lineHeight: '20px',
+                color: '#D92D20', marginTop: -4
+              }}>The promo code is invalid. Please try another.</span>
+            )}
             <button
               disabled={!valid}
-              onClick={() => valid && onUse(codes[0].id)}
+              onClick={handleUse}
               style={{
                 width: '100%', height: 48, borderRadius: 8, border: 0,
                 cursor: valid ? 'pointer' : 'default',
-                background: valid ? C.bluePrimary : '#A8C7FA', color: C.white,
+                background: (valid && !error) ? C.bluePrimary : '#A8C7FA', color: C.white,
                 fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 18,
                 lineHeight: '24px',
                 boxShadow: '0 1px 2px rgba(16,24,40,0.05)',
@@ -944,8 +1042,11 @@ function AddPromoScreen({ codes, otherCodes, appliedId, loadingId, highlightId, 
           </div>
         </div>
 
+        {/* separator */}
+        <div style={{ height: 1, background: C.border, marginTop: 24 }} />
+
         {/* applicable / others */}
-        <div style={{ paddingTop: 32 }}>
+        <div style={{ paddingTop: 24 }}>
           <div style={{ display: 'flex', gap: 24, marginBottom: 16 }}>
             {['applicable', 'others'].map((t) => (
               <button
@@ -953,34 +1054,29 @@ function AddPromoScreen({ codes, otherCodes, appliedId, loadingId, highlightId, 
                 onClick={() => setTab(t)}
                 style={{
                   background: 'transparent', border: 0, padding: '0 0 6px', cursor: 'pointer',
-                  fontFamily: 'Barlow, sans-serif', fontWeight: 700, fontSize: 18,
+                  fontFamily: 'Barlow, sans-serif', fontWeight: 600, fontSize: 18,
                   lineHeight: '24px',
                   color: tab === t ? C.text900 : 'rgba(16,24,40,0.4)',
                   position: 'relative'
                 }}
               >
                 {t === 'applicable' ? 'Applicable' : 'Others'}
-                {tab === t && (
-                  <span style={{
-                    position: 'absolute', left: 0, right: 0, bottom: 0, height: 2,
-                    background: C.text900, borderRadius: 2
-                  }} />
-                )}
               </button>
             ))}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {list.map((c) => (
-              <PromoCard
-                key={c.id}
-                code={c}
-                applied={appliedId === c.id}
-                loading={loadingId === c.id}
-                highlight={highlightId === c.id}
-                disabled={tab === 'others'}
-                onUse={() => onUse(c.id)}
-                onRemove={() => onRemove(c.id)}
-              />
+              <div key={c.id} ref={listFlip(c.id)}>
+                <PromoCard
+                  code={c}
+                  applied={appliedId === c.id}
+                  loading={loadingId === c.id}
+                  highlight={highlightId === c.id}
+                  disabled={tab === 'others'}
+                  onUse={() => onUse(c.id)}
+                  onRemove={() => onRemove(c.id)}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -1001,10 +1097,23 @@ function Checkout({ bundle, onBack, onComplete }) {
   const [promoHighlightId, setPromoHighlightId] = useState(null);
   const [promoToast, setPromoToast] = useState({ visible: false, message: '' });
   const [showAddPromo, setShowAddPromo] = useState(false);
+  // promo codes shown on the checkout carousel — starts with the canned set,
+  // but a user-typed code gets prepended to the front
+  const [promoList, setPromoList] = useState(PROMO_CODES);
 
+  const promoScrollRef = useRef(null);
   const timersRef = useRef([]);
   useEffect(() => () => { timersRef.current.forEach(clearTimeout); }, []);
   const after = (ms, fn) => { const id = setTimeout(fn, ms); timersRef.current.push(id); return id; };
+
+  // when a code is prepended to the carousel, snap back to the left so the
+  // freshly added (left-most) card is in view
+  useLayoutEffect(() => {
+    if (promoScrollRef.current) promoScrollRef.current.scrollLeft = 0;
+  }, [promoList.length]);
+
+  // FLIP: new card fades in at the front while the existing cards slide right
+  const carouselFlip = useFlipList(promoList.map(c => c.id).join(','), 'x');
 
   // each section's check turns green once the user has completed it
   const done = {
@@ -1057,6 +1166,38 @@ function Checkout({ bundle, onBack, onComplete }) {
   const handleRemoveFromAdd = (id) => {
     setShowAddPromo(false);
     after(220, () => handleRemovePromo(id));
+  };
+
+  // a valid code the user typed by hand that isn't already on the carousel:
+  // prepend a fresh card to the front in a loading state *instantly*, slide
+  // back to checkout (~300ms), then resolve it through the normal
+  // loading → highlight → applied flow like every other code
+  const handleApplyTyped = (rawCode) => {
+    const code = rawCode.trim().toUpperCase();
+    if (code.length < 3) return;
+    const id = `typed-${Date.now()}`;
+    const newPromo = {
+      id,
+      code,
+      title: '8% off (up to US$15)',
+      expires: 'Expires in 20 days'
+    };
+    // add to the front + start loading immediately
+    // (the effect below scrolls the carousel back to the new left-most card
+    // once React has committed it to the DOM)
+    setPromoList(list => [newPromo, ...list]);
+    setPromoLoadingId(id);
+    // slide back to the checkout
+    setShowAddPromo(false);
+    // resolve the loader, then apply + highlight (single applied code at a time)
+    after(700, () => {
+      setPromoLoadingId(null);
+      setPromoAppliedId(id);
+      setPromoHighlightId(id);
+      setPromoToast({ visible: true, message: 'Promo code applied!' });
+      after(450, () => setPromoHighlightId(null));
+      after(2000, () => setPromoToast(s => ({ ...s, visible: false })));
+    });
   };
 
   const paymentMethods = [
@@ -1179,14 +1320,14 @@ function Checkout({ bundle, onBack, onComplete }) {
               }}>Add promo code</button>
             }
           />
-          <div className="scroller" style={{
+          <div ref={promoScrollRef} className="scroller" style={{
             display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4,
             scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
-            scrollPaddingLeft: 16,
+            scrollPaddingLeft: 16, overflowAnchor: 'none',
             margin: '0 -16px', padding: '0 16px'
           }}>
-            {PROMO_CODES.map(c => (
-              <div key={c.id} style={{ scrollSnapAlign: 'start', flex: '0 0 280px' }}>
+            {promoList.map(c => (
+              <div key={c.id} ref={carouselFlip(c.id)} style={{ scrollSnapAlign: 'start', flex: '0 0 280px' }}>
                 <PromoCard
                   code={c}
                   applied={promoAppliedId === c.id}
@@ -1330,13 +1471,14 @@ function Checkout({ bundle, onBack, onComplete }) {
         pointerEvents: showAddPromo ? 'auto' : 'none'
       }}>
         <AddPromoScreen
-          codes={PROMO_CODES}
+          codes={promoList}
           otherCodes={OTHER_CODES}
           appliedId={promoAppliedId}
           loadingId={promoLoadingId}
           highlightId={promoHighlightId}
           onBack={() => setShowAddPromo(false)}
           onUse={handleApplyFromAdd}
+          onApplyTyped={handleApplyTyped}
           onRemove={handleRemoveFromAdd}
         />
       </div>
